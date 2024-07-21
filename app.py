@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 model = joblib.load('best_model.pkl')
 
 # Memuat data untuk pengkodean dan penskalaan
-data = pd.read_csv('onlinefoods.csv')
+data = pd.read_csv('/mnt/data/onlinefoods.csv')
 
 # Menambahkan kategori 'Unknown' ke setiap kolom kategorikal selama pelatihan
 for column in data.select_dtypes(include=['object']).columns:
@@ -45,6 +45,16 @@ def preprocess_input(user_input):
 # Antarmuka Streamlit
 st.title("Prediksi Feedback Pelanggan Online Food")
 
+# Tambahkan HTML kustom
+st.markdown("""
+    <style>
+    .main {
+        background-color: #f0f0f5;
+    }
+    </style>
+    <h3>Masukkan Data Pelanggan</h3>
+""", unsafe_allow_html=True)
+
 age = st.number_input('Age', min_value=18, max_value=100)
 gender = st.selectbox('Gender', ['Male', 'Female'])
 marital_status = st.selectbox('Marital Status', ['Single', 'Married'])
@@ -75,3 +85,9 @@ if st.button('Predict'):
     user_input_processed = preprocess_input(user_input)
     prediction = model.predict(user_input_processed)
     st.write(f'Prediction: {prediction[0]}')
+
+# Tambahkan elemen HTML untuk output
+st.markdown("""
+    <h3>Output Prediksi</h3>
+    <p>Hasil prediksi akan ditampilkan di sini.</p>
+""", unsafe_allow_html=True)
