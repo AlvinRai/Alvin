@@ -9,18 +9,11 @@ model = joblib.load('best_model.pkl')
 # Memuat data untuk pengkodean dan penskalaan
 data = pd.read_csv('onlinefoods.csv')
 
-# Menambahkan kategori 'Unknown' ke setiap kolom kategorikal selama pelatihan
-for column in data.select_dtypes(include=['object']).columns:
-    data[column] = data[column].astype(str)
-    if 'Unknown' not in data[column].unique():
-        data[column] = pd.concat([data[column], pd.Series(['Unknown'])])
-
 # Pra-pemrosesan data
 label_encoders = {}
 for column in data.select_dtypes(include=['object']).columns:
     le = LabelEncoder()
-    le.fit(data[column])
-    data[column] = le.transform(data[column])
+    le.fit(data[column].astype(str))
     label_encoders[column] = le
 
 scaler = StandardScaler()
@@ -35,9 +28,12 @@ def preprocess_input(user_input):
             input_value = str(user_input[column])
             if input_value not in label_encoders[column].classes_:
                 input_value = 'Unknown'
+                label_encoders[column].classes_ = list(label_encoders[column].classes_) + ['Unknown']
             processed_input[column] = label_encoders[column].transform([input_value])[0]
         else:
-            processed_input[column] = label_encoders[column].transform(['Unknown'])[0]
+            input_value = 'Unknown'
+            label_encoders[column].classes_ = list(label_encoders[column].classes_) + ['Unknown']
+            processed_input[column] = label_encoders[column].transform([input_value])[0]
     processed_input = pd.DataFrame(processed_input, index=[0])
     processed_input[numeric_features] = scaler.transform(processed_input[numeric_features])
     return processed_input
