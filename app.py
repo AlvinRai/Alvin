@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 model = joblib.load('best_model.pkl')
 
 # Memuat data untuk pengkodean dan penskalaan
-data = pd.read_csv('/mnt/data/onlinefoods.csv')
+data = pd.read_csv('onlinefoods.csv')
 
 # Pra-pemrosesan data
 label_encoders = {}
