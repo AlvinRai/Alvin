@@ -12,11 +12,8 @@ data = pd.read_csv('onlinefoods.csv')
 # Daftar kolom yang diperlukan selama pelatihan
 required_columns = ['Age', 'Gender', 'Marital Status', 'Occupation', 'Monthly Income', 'Educational Qualifications', 'Family size', 'latitude', 'longitude', 'Pin code']
 
-# Periksa apakah semua kolom yang diperlukan ada di DataFrame
-missing_columns = [col for col in required_columns if col not in data.columns]
-if missing_columns:
-    st.error(f"Kolom yang dibutuhkan tidak ditemukan di data: {missing_columns}")
-    st.stop()
+# Pastikan kolom yang tidak diperlukan tidak ada
+data = data[required_columns]
 
 # Pra-pemrosesan data
 label_encoders = {}
