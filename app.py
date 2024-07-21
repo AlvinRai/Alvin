@@ -13,8 +13,8 @@ data = pd.read_csv('onlinefoods.csv')
 label_encoders = {}
 for column in data.select_dtypes(include=['object']).columns:
     le = LabelEncoder()
-    le.fit(data[column])
-    data[column] = le.transform(data[column])
+    le.fit(data[column].astype(str))  # Memastikan semua data adalah string
+    data[column] = le.transform(data[column].astype(str))
     label_encoders[column] = le
 
 scaler = StandardScaler()
@@ -23,13 +23,15 @@ data[numeric_features] = scaler.fit_transform(data[numeric_features])
 
 # Fungsi untuk memproses input pengguna
 def preprocess_input(user_input):
+    processed_input = {}
     for column in label_encoders:
-        if user_input[column] not in label_encoders[column].classes_:
-            user_input[column] = 'Unknown'
-        user_input[column] = label_encoders[column].transform([user_input[column]])[0]
-    user_input = pd.DataFrame(user_input, index=[0])
-    user_input[numeric_features] = scaler.transform(user_input[numeric_features])
-    return user_input
+        input_value = str(user_input[column])
+        if input_value not in label_encoders[column].classes_:
+            input_value = 'Unknown'
+        processed_input[column] = label_encoders[column].transform([input_value])[0]
+    processed_input = pd.DataFrame(processed_input, index=[0])
+    processed_input[numeric_features] = scaler.transform(processed_input[numeric_features])
+    return processed_input
 
 # Antarmuka Streamlit
 st.title("Prediksi Feedback Pelanggan Online Food")
