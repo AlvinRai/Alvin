@@ -7,12 +7,12 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 model = joblib.load('best_model.pkl')
 
 # Memuat data untuk pengkodean dan penskalaan
-data = pd.read_csv('onlinefoods.csv')
+data = pd.read_csv('/mnt/data/onlinefoods.csv')
 
 # Pastikan kolom yang dibutuhkan ada di DataFrame
 required_columns = ['Age', 'Gender', 'Marital Status', 'Occupation', 'Monthly Income', 'Educational Qualifications', 'Family size', 'latitude', 'longitude', 'Pin code']
 if not all(col in data.columns for col in required_columns):
-    st.error(f"Satu atau lebih kolom yang dibutuhkan tidak ditemukan di data.")
+    st.error("Satu atau lebih kolom yang dibutuhkan tidak ditemukan di data.")
     st.stop()
 
 # Pra-pemrosesan data
@@ -76,7 +76,6 @@ family_size = st.number_input('Family size', min_value=1, max_value=20)
 latitude = st.number_input('Latitude', format="%f")
 longitude = st.number_input('Longitude', format="%f")
 pin_code = st.number_input('Pin code', min_value=100000, max_value=999999)
-feedback = st.selectbox('Feedback', ['Positive', 'Negative'])
 
 user_input = {
     'Age': age,
