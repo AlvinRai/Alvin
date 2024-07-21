@@ -13,7 +13,7 @@ data = pd.read_csv('onlinefoods.csv')
 for column in data.select_dtypes(include=['object']).columns:
     data[column] = data[column].astype(str)
     if 'Unknown' not in data[column].unique():
-        data[column] = data[column].append(pd.Series(['Unknown']))
+        data[column] = pd.concat([data[column], pd.Series(['Unknown'])])
 
 # Pra-pemrosesan data
 label_encoders = {}
