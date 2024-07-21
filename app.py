@@ -9,10 +9,13 @@ model = joblib.load('best_model.pkl')
 # Memuat data untuk pengkodean dan penskalaan
 data = pd.read_csv('onlinefoods.csv')
 
-# Pastikan kolom yang dibutuhkan ada di DataFrame
+# Daftar kolom yang diperlukan selama pelatihan
 required_columns = ['Age', 'Gender', 'Marital Status', 'Occupation', 'Monthly Income', 'Educational Qualifications', 'Family size', 'latitude', 'longitude', 'Pin code']
-if not all(col in data.columns for col in required_columns):
-    st.error("Satu atau lebih kolom yang dibutuhkan tidak ditemukan di data.")
+
+# Periksa apakah semua kolom yang diperlukan ada di DataFrame
+missing_columns = [col for col in required_columns if col not in data.columns]
+if missing_columns:
+    st.error(f"Kolom yang dibutuhkan tidak ditemukan di data: {missing_columns}")
     st.stop()
 
 # Pra-pemrosesan data
@@ -30,32 +33,21 @@ data[numeric_features] = scaler.fit_transform(data[numeric_features])
 
 # Fungsi untuk memproses input pengguna
 def preprocess_input(user_input):
-    processed_input = {}
+    processed_input = {col: [user_input.get(col, 'Unknown')] for col in required_columns}
     for column in label_encoders:
-        if column in user_input:
-            input_value = str(user_input[column])
-            # Cek apakah nilai input ada dalam kelas yang dikenali
+        if column in processed_input:
+            input_value = processed_input[column][0]
             if input_value in label_encoders[column].classes_:
-                processed_input[column] = label_encoders[column].transform([input_value])[0]
+                processed_input[column] = label_encoders[column].transform([input_value])
             else:
-                # Jika tidak dikenali, Anda bisa memilih untuk mengabaikan nilai atau menggunakan nilai default
-                st.warning(f"{input_value} tidak dikenali. Menggunakan nilai default.")
-                processed_input[column] = label_encoders[column].transform([label_encoders[column].classes_[0]])[0]  # Menggunakan kelas pertama sebagai nilai default
-    processed_input = pd.DataFrame(processed_input, index=[0])
-    
-    for column in numeric_features:
-        if column in user_input:
-            processed_input[column] = user_input[column]
-        else:
-            st.warning(f"Kolom {column} tidak ditemukan dalam input pengguna.")
-    
+                processed_input[column] = label_encoders[column].transform(['Unknown'])
+    processed_input = pd.DataFrame(processed_input)
     processed_input[numeric_features] = scaler.transform(processed_input[numeric_features])
     return processed_input
 
 # Antarmuka Streamlit
 st.title("Prediksi Feedback Pelanggan Online Food")
 
-# Tambahkan HTML kustom
 st.markdown("""
     <style>
     .main {
@@ -92,8 +84,11 @@ user_input = {
 
 if st.button('Predict'):
     user_input_processed = preprocess_input(user_input)
-    prediction = model.predict(user_input_processed)
-    st.write(f'Prediction: {prediction[0]}')
+    try:
+        prediction = model.predict(user_input_processed)
+        st.write(f'Prediction: {prediction[0]}')
+    except ValueError as e:
+        st.error(f"Error in prediction: {e}")
 
 # Tambahkan elemen HTML untuk output
 st.markdown("""
