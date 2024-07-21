@@ -10,11 +10,10 @@ model = joblib.load('best_model.pkl')
 data = pd.read_csv('onlinefoods.csv')
 
 # Pastikan kolom yang dibutuhkan ada di DataFrame
-required_columns = ['Age', 'Gender', 'Marital Status', 'Occupation', 'Monthly Income', 'Educational Qualifications', 'Family size', 'latitude', 'longitude', 'Pin code', 'Output']
-for column in required_columns:
-    if column not in data.columns:
-        st.error(f"Kolom {column} tidak ditemukan di data.")
-        st.stop()
+required_columns = ['Age', 'Gender', 'Marital Status', 'Occupation', 'Monthly Income', 'Educational Qualifications', 'Family size', 'latitude', 'longitude', 'Pin code']
+if not all(col in data.columns for col in required_columns):
+    st.error(f"Satu atau lebih kolom yang dibutuhkan tidak ditemukan di data.")
+    st.stop()
 
 # Pra-pemrosesan data
 label_encoders = {}
@@ -89,8 +88,7 @@ user_input = {
     'Family size': family_size,
     'latitude': latitude,
     'longitude': longitude,
-    'Pin code': pin_code,
-    'Feedback': feedback
+    'Pin code': pin_code
 }
 
 if st.button('Predict'):
