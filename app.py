@@ -12,7 +12,7 @@ data = pd.read_csv('onlinefoods.csv')
 # Daftar kolom yang diperlukan selama pelatihan
 required_columns = ['Age', 'Gender', 'Marital Status', 'Occupation', 'Monthly Income', 'Educational Qualifications', 'Family size', 'latitude', 'longitude', 'Pin code']
 
-# Pastikan kolom yang tidak diperlukan tidak ada
+# Pastikan hanya kolom yang diperlukan ada
 data = data[required_columns]
 
 # Pra-pemrosesan data
