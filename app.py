@@ -13,7 +13,8 @@ data = pd.read_csv('onlinefoods.csv')
 label_encoders = {}
 for column in data.select_dtypes(include=['object']).columns:
     le = LabelEncoder()
-    data[column] = le.fit_transform(data[column])
+    le.fit(data[column])
+    data[column] = le.transform(data[column])
     label_encoders[column] = le
 
 scaler = StandardScaler()
@@ -23,6 +24,8 @@ data[numeric_features] = scaler.fit_transform(data[numeric_features])
 # Fungsi untuk memproses input pengguna
 def preprocess_input(user_input):
     for column in label_encoders:
+        if user_input[column] not in label_encoders[column].classes_:
+            user_input[column] = 'Unknown'
         user_input[column] = label_encoders[column].transform([user_input[column]])[0]
     user_input = pd.DataFrame(user_input, index=[0])
     user_input[numeric_features] = scaler.transform(user_input[numeric_features])
@@ -36,7 +39,7 @@ gender = st.selectbox('Gender', ['Male', 'Female'])
 marital_status = st.selectbox('Marital Status', ['Single', 'Married'])
 occupation = st.selectbox('Occupation', ['Student', 'Employee', 'Self Employed'])
 monthly_income = st.selectbox('Monthly Income', ['No Income', 'Below Rs.10000', '10001 to 25000', '25001 to 50000', 'More than 50000'])
-educational_qualifications = st.selectbox('Educational Qualifications', ['Under Graduate', 'Graduate', 'Post Graduate'])
+educational_qualifications = st.selectbox('Educational Qualifications', ['Under Graduate', 'Graduate', 'Post Graduate', 'Unknown'])
 family_size = st.number_input('Family size', min_value=1, max_value=20)
 latitude = st.number_input('Latitude', format="%f")
 longitude = st.number_input('Longitude', format="%f")
