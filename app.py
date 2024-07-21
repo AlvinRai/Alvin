@@ -9,6 +9,13 @@ model = joblib.load('best_model.pkl')
 # Memuat data untuk pengkodean dan penskalaan
 data = pd.read_csv('onlinefoods.csv')
 
+# Pastikan kolom yang dibutuhkan ada di DataFrame
+required_columns = ['Age', 'Gender', 'Marital Status', 'Occupation', 'Monthly Income', 'Educational Qualifications', 'Family size', 'latitude', 'longitude', 'Pin code', 'Output']
+for column in required_columns:
+    if column not in data.columns:
+        st.error(f"Kolom {column} tidak ditemukan di data.")
+        st.stop()
+
 # Pra-pemrosesan data
 label_encoders = {}
 for column in data.select_dtypes(include=['object']).columns:
@@ -19,7 +26,7 @@ for column in data.select_dtypes(include=['object']).columns:
     label_encoders[column] = le
 
 scaler = StandardScaler()
-numeric_features = data.select_dtypes(include=['int64', 'float64']).columns
+numeric_features = ['Age', 'Family size', 'latitude', 'longitude', 'Pin code']
 data[numeric_features] = scaler.fit_transform(data[numeric_features])
 
 # Fungsi untuk memproses input pengguna
@@ -36,6 +43,13 @@ def preprocess_input(user_input):
                 st.warning(f"{input_value} tidak dikenali. Menggunakan nilai default.")
                 processed_input[column] = label_encoders[column].transform([label_encoders[column].classes_[0]])[0]  # Menggunakan kelas pertama sebagai nilai default
     processed_input = pd.DataFrame(processed_input, index=[0])
+    
+    for column in numeric_features:
+        if column in user_input:
+            processed_input[column] = user_input[column]
+        else:
+            st.warning(f"Kolom {column} tidak ditemukan dalam input pengguna.")
+    
     processed_input[numeric_features] = scaler.transform(processed_input[numeric_features])
     return processed_input
 
