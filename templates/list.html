@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+   <body>
+      <table border = 1>
+         <thead>
+            <td>Nomor</td>
+            <td>Biayaiklan</td>
+            <td>Keuntungan</td>
+        </thead>
+         
+         {% for row in rows %}
+            <tr>
+               <td>{{row["id"]}}</td>
+               <td>{{row["biayaiklan"]}}</td>
+               <td> {{row["keuntungan"]}}</td>
+               </tr>
+         {% endfor %}
+      </table>
+      
+      <a href = "/">balik ke halaman awal</a>
+   </body>
+</html>
