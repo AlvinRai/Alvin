@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 model = joblib.load('best_model.pkl')
 
 # Memuat data untuk pengkodean dan penskalaan
-data = pd.read_csv('/mnt/data/onlinefoods.csv')
+data = pd.read_csv('onlinefoods.csv')
 
 # Menambahkan kategori 'Unknown' ke setiap kolom kategorikal selama pelatihan
 for column in data.select_dtypes(include=['object']).columns:
