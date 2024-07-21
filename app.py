@@ -19,6 +19,8 @@ for column in data.select_dtypes(include=['object']).columns:
 label_encoders = {}
 for column in data.select_dtypes(include=['object']).columns:
     le = LabelEncoder()
+    data[column] = data[column].astype(str)
+    data[column].append(pd.Series(['Unknown']), ignore_index=True)
     le.fit(data[column])
     data[column] = le.transform(data[column])
     label_encoders[column] = le
