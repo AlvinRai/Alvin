@@ -61,4 +61,3 @@ if st.button('Predict'):
     user_input_processed = preprocess_input(user_input)
     prediction = model.predict(user_input_processed)
     st.write(f'Prediction: {prediction[0]}')
-
