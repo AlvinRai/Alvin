@@ -9,18 +9,11 @@ model = joblib.load('best_model.pkl')
 # Memuat data untuk pengkodean dan penskalaan
 data = pd.read_csv('onlinefoods.csv')
 
-# Menambahkan kategori 'Unknown' ke setiap kolom kategorikal selama pelatihan
-for column in data.select_dtypes(include=['object']).columns:
-    data[column] = data[column].astype(str)
-    if 'Unknown' not in data[column].unique():
-        data[column] = pd.concat([data[column], pd.Series(['Unknown'])], ignore_index=True)
-
 # Pra-pemrosesan data
 label_encoders = {}
 for column in data.select_dtypes(include=['object']).columns:
     le = LabelEncoder()
     data[column] = data[column].astype(str)
-    data[column].append(pd.Series(['Unknown']), ignore_index=True)
     le.fit(data[column])
     data[column] = le.transform(data[column])
     label_encoders[column] = le
@@ -35,11 +28,13 @@ def preprocess_input(user_input):
     for column in label_encoders:
         if column in user_input:
             input_value = str(user_input[column])
-            if input_value not in label_encoders[column].classes_:
-                input_value = 'Unknown'
-            processed_input[column] = label_encoders[column].transform([input_value])[0]
-        else:
-            processed_input[column] = label_encoders[column].transform(['Unknown'])[0]
+            # Cek apakah nilai input ada dalam kelas yang dikenali
+            if input_value in label_encoders[column].classes_:
+                processed_input[column] = label_encoders[column].transform([input_value])[0]
+            else:
+                # Jika tidak dikenali, Anda bisa memilih untuk mengabaikan nilai atau menggunakan nilai default
+                st.warning(f"{input_value} tidak dikenali. Menggunakan nilai default.")
+                processed_input[column] = label_encoders[column].transform([label_encoders[column].classes_[0]])[0]  # Menggunakan kelas pertama sebagai nilai default
     processed_input = pd.DataFrame(processed_input, index=[0])
     processed_input[numeric_features] = scaler.transform(processed_input[numeric_features])
     return processed_input
@@ -57,12 +52,13 @@ st.markdown("""
     <h3>Masukkan Data Pelanggan</h3>
 """, unsafe_allow_html=True)
 
+# Input pengguna
 age = st.number_input('Age', min_value=18, max_value=100)
 gender = st.selectbox('Gender', ['Male', 'Female'])
 marital_status = st.selectbox('Marital Status', ['Single', 'Married'])
 occupation = st.selectbox('Occupation', ['Student', 'Employee', 'Self Employed'])
 monthly_income = st.selectbox('Monthly Income', ['No Income', 'Below Rs.10000', '10001 to 25000', '25001 to 50000', 'More than 50000'])
-educational_qualifications = st.selectbox('Educational Qualifications', ['Under Graduate', 'Graduate', 'Post Graduate', 'Unknown'])
+educational_qualifications = st.selectbox('Educational Qualifications', ['Under Graduate', 'Graduate', 'Post Graduate'])
 family_size = st.number_input('Family size', min_value=1, max_value=20)
 latitude = st.number_input('Latitude', format="%f")
 longitude = st.number_input('Longitude', format="%f")
