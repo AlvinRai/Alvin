@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 model = joblib.load('best_model.pkl')
 
 # Memuat data untuk pengkodean dan penskalaan
-data = pd.read_csv('onlinefoods.csv')
+data = pd.read_csv('/mnt/data/onlinefoods.csv')
 
 # Daftar kolom yang diperlukan selama pelatihan
 required_columns = ['Age', 'Gender', 'Marital Status', 'Occupation', 'Monthly Income', 'Educational Qualifications', 'Family size', 'latitude', 'longitude', 'Pin code']
@@ -41,6 +41,7 @@ def preprocess_input(user_input):
     processed_input = pd.DataFrame(processed_input)
     processed_input[numeric_features] = scaler.transform(processed_input[numeric_features])
     return processed_input
+
 # CSS for styling
 st.markdown("""
     <style>
@@ -76,25 +77,23 @@ st.markdown("""
 st.title("Prediksi Feedback Pelanggan Online Food")
 
 st.markdown("""
-    <style>
-    .main {
-        background-color: #f0f0f5;
-    }
-    </style>
     <h3>Masukkan Data Pelanggan</h3>
 """, unsafe_allow_html=True)
 
 # Input pengguna
-age = st.number_input('Age', min_value=18, max_value=100)
-gender = st.selectbox('Gender', ['Male', 'Female'])
-marital_status = st.selectbox('Marital Status', ['Single', 'Married'])
-occupation = st.selectbox('Occupation', ['Student', 'Employee', 'Self Employed'])
-monthly_income = st.selectbox('Monthly Income', ['No Income', 'Below Rs.10000', '10001 to 25000', '25001 to 50000', 'More than 50000'])
-educational_qualifications = st.selectbox('Educational Qualifications', ['Under Graduate', 'Graduate', 'Post Graduate'])
-family_size = st.number_input('Family size', min_value=1, max_value=20)
-latitude = st.number_input('Latitude', format="%f")
-longitude = st.number_input('Longitude', format="%f")
-pin_code = st.number_input('Pin code', min_value=100000, max_value=999999)
+col1, col2 = st.columns(2)
+with col1:
+    age = st.number_input('Age', min_value=18, max_value=100)
+    gender = st.selectbox('Gender', ['Male', 'Female'])
+    marital_status = st.selectbox('Marital Status', ['Single', 'Married'])
+    occupation = st.selectbox('Occupation', ['Student', 'Employee', 'Self Employed'])
+    monthly_income = st.selectbox('Monthly Income', ['No Income', 'Below Rs.10000', '10001 to 25000', '25001 to 50000', 'More than 50000'])
+with col2:
+    educational_qualifications = st.selectbox('Educational Qualifications', ['Under Graduate', 'Graduate', 'Post Graduate'])
+    family_size = st.number_input('Family size', min_value=1, max_value=20)
+    latitude = st.number_input('Latitude', format="%f")
+    longitude = st.number_input('Longitude', format="%f")
+    pin_code = st.number_input('Pin code', min_value=100000, max_value=999999)
 
 user_input = {
     'Age': age,
@@ -113,7 +112,7 @@ if st.button('Predict'):
     user_input_processed = preprocess_input(user_input)
     try:
         prediction = model.predict(user_input_processed)
-        st.write(f'Prediction: {prediction[0]}')
+        st.success(f'Prediction: {prediction[0]}')
     except ValueError as e:
         st.error(f"Error in prediction: {e}")
 
