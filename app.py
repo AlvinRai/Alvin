@@ -41,6 +41,36 @@ def preprocess_input(user_input):
     processed_input = pd.DataFrame(processed_input)
     processed_input[numeric_features] = scaler.transform(processed_input[numeric_features])
     return processed_input
+# CSS for styling
+st.markdown("""
+    <style>
+    .main {
+        background-color: #f0f0f5;
+    }
+    h1 {
+        color: #4b4b4b;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    h3 {
+        color: #4b4b4b;
+    }
+    .stButton>button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .stButton>button:hover {
+        background-color: #45a049;
+    }
+    .stNumberInput, .stSelectbox {
+        margin-bottom: 20px;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # Antarmuka Streamlit
 st.title("Prediksi Feedback Pelanggan Online Food")
