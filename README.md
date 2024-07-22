@@ -13,7 +13,7 @@ This is a Streamlit application for predicting customer feedback on online food 
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/username/online-food-feedback.git
+    git clone [https://github.com/username/online-food-feedback.git](https://github.com/AlvinRai/Alvin.git)
     cd online-food-feedback
     ```
 
