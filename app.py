@@ -57,7 +57,7 @@ st.markdown("""
     }
     .stButton>button {
         background-color: #4b4b4b;
-        color: white;
+        color: black;
         padding: 10px 24px;
         border: none;
         border-radius: 4px;
@@ -78,7 +78,7 @@ st.title("Prediksi Feedback Pelanggan Online Food")
 st.markdown("""
     <style>
     .main {
-        background-color: #f0f0f5;
+        background-color: #87CEEB;
     }
     </style>
     <h3>Masukkan Data Pelanggan</h3>
