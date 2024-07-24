@@ -37,7 +37,8 @@ def preprocess_input(user_input):
             if input_value in label_encoders[column].classes_:
                 processed_input[column] = label_encoders[column].transform([input_value])
             else:
-                processed_input[column] = label_encoders[column].transform(['Unknown'])
+                # Jika nilai tidak dikenal, berikan nilai default seperti -1
+                processed_input[column] = [-1]
     processed_input = pd.DataFrame(processed_input)
     processed_input[numeric_features] = scaler.transform(processed_input[numeric_features])
     return processed_input
